@@ -3,7 +3,7 @@ const Mongoose = require('mongoose')
 Mongoose.Promise = global.Promise
 
 module.exports.createProduct = (event, context, callback) => {
-  const mongoose = Mongoose.createConnection('mongodb://admin:admin@ds243728.mlab.com:43728/items-db')
+  const mongoose = Mongoose.createConnection(process.env.DB_URI)
   const Product = require('../../models/product')(mongoose)
   const body = JSON.parse(event.body);
 
