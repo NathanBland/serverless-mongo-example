@@ -1,6 +1,7 @@
 'use strict';
 const Mongoose = require('mongoose')
 const passport = require('passport')
+const jwt = require('jwt-simple')
 const LocalStrategy = require('passport-local').Strategy
 Mongoose.Promise = global.Promise
 
@@ -8,7 +9,7 @@ module.exports.createUser = (event, context, callback) => {
   const mongoose = Mongoose.createConnection(process.env.DB_URI)
   const User = require('../../models/user')(mongoose)
   const body = JSON.parse(event.body);
-  User.plugin(require('passport-local-mongoose'))
+
   User.register(new User({
     displayName: '',
     email: body.username,

@@ -2,7 +2,8 @@ const uuid = require('uuid')
 const mongoose = require('mongoose')
 
 module.exports = (db) => {
-  let user =  db.model('user', {
+  let user = new mongoose.Schema({
+    // also tried new mongoose.Schema('user')...
     _id: {
       type: String,
       default: uuid.v4()
@@ -14,7 +15,6 @@ module.exports = (db) => {
       unique: true
     }
   })
-  // user.plugin()
-  return user
+  user.plugin(require('passport-local-mongoose'))
+  return db.model('user', user)
 }
-//  = product
