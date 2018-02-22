@@ -3,6 +3,7 @@ const Mongoose = require('mongoose')
 const passport = require('passport')
 const jwt = require('jwt-simple')
 const LocalStrategy = require('passport-local').Strategy
+const tokenSecret = process.env.tokenSecret || 'a really awful secret'
 Mongoose.Promise = global.Promise
 
 module.exports.createUser = (event, context, callback) => {

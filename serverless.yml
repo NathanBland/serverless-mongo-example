@@ -26,6 +26,7 @@ provider:
   stage: dev
   environment:
     DB_URI: ${env:DB_URI}
+    tokenSecret: ${env:tokenSecret}
 # you can overwrite defaults here
 #  stage: dev
 #  region: us-east-1
