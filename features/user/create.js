@@ -16,13 +16,14 @@ module.exports.createUser = (event, context, callback) => {
     username: body.username
   }), body.password, (err, user) => {
     if (err) {
+      console.error('err:', err)
       return callback(new Error(err))
     }
     passport.authenticate('local', {session: false})(event, callback, function () {
       let expires = new Date()
       const token = jwt.encode({
-        id: req.user.id,
-        username: req.user.username,
+        id: user.id,
+        username: user.username,
         expiresAt: expires.setHours(expires.getHours()+8)
       }, tokenSecret)
       return callback(null, {
