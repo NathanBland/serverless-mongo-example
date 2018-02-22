@@ -14,6 +14,7 @@
 service: aws-nodejs # NOTE: update this with your service name
 plugins:
   - serverless-offline
+  - serverless-mocha-plugin
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 # frameworkVersion: "=X.X.X"
@@ -63,6 +64,12 @@ package:
 #    - exclude-me-dir/**
 
 functions:
+  createUser:
+    handler: features/user/create.createUser
+    events:
+      - http:
+          path: user
+          method: post
   createProduct:
     handler: features/product/create.createProduct
     events:
