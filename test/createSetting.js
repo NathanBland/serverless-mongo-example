@@ -12,8 +12,9 @@ describe('createSetting', () => {
     done();
   });
 
-  it('implement tests here', () => {
-    return wrapped.run({}).then((response) => {
+  it('Should return the same body', () => {
+    return wrapped.run(`{"body": {"setting": "test"}}`).then((response) => {
+      console.log('response:', response)
       expect(response).to.not.be.empty;
     });
   });
