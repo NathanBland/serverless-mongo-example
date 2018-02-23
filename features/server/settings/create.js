@@ -1,7 +1,6 @@
 'use strict';
 
 module.exports.createSetting = (event, context, callback) => {
-  console.log('event', event)
   const body = JSON.parse(event.body)
   const response = {
     statusCode: 200,

@@ -13,9 +13,9 @@ describe('createSetting', () => {
   });
 
   it('Should return the same body', () => {
-    return wrapped.run(`{"body": {"setting": "test"}}`).then((response) => {
-      console.log('response:', response)
-      expect(response).to.not.be.empty;
+    const body = {"body": `{"setting": "test"}`}
+    return wrapped.run(body).then((response) => {
+      expect(response).to.be.body;
     });
   });
 });
