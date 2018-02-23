@@ -65,6 +65,14 @@ package:
 #    - exclude-me-dir/**
 
 functions:
+  createSetting:
+    handler: features/server/settings/create.createSetting
+    events:
+      - http: post setting
+  readUser:
+    handler: features/user/read.readUser
+    events:
+      - http: get user
   createUser:
     handler: features/user/create.createUser
     events:
