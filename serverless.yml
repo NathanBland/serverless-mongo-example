@@ -57,9 +57,6 @@ package:
     - features/**
     - models/**
 #package:
-#  include:
-#    - include-me.js
-#    - include-me-dir/**
 #  exclude:
 #    - exclude-me.js
 #    - exclude-me-dir/**
@@ -69,10 +66,14 @@ functions:
     handler: features/auth/login.loginUser
     events:
       - http: post auth/login
-  loginUser:
+  registerUser:
     handler: features/auth/register.createUser
     events:
-      - http: post auth/login
+      - http: post auth/register
+  authCheck:
+    handler: features/auth/me.me
+    events:
+      - http: post auth/me
   createSetting:
     handler: features/server/settings/create.createSetting
     events:
