@@ -60,12 +60,19 @@ package:
 #  exclude:
 #    - exclude-me.js
 #    - exclude-me-dir/**
+custom:
+  serverless-offline:
+    corsAllowOrigin: "*"
+    corsAllowHeaders: "Origin, X-Requested-With, Content-Type, Accept"
 
 functions:
   loginUser:
     handler: features/auth/login.loginUser
     events:
-      - http: post auth/login
+      - http: 
+          path: auth/login
+          method: post
+          cors: true
   registerUser:
     handler: features/auth/register.createUser
     events:
