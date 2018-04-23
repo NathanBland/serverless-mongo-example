@@ -65,6 +65,14 @@ package:
 #    - exclude-me-dir/**
 
 functions:
+  loginUser:
+    handler: features/auth/login.loginUser
+    events:
+      - http: post auth/login
+  loginUser:
+    handler: features/auth/register.createUser
+    events:
+      - http: post auth/login
   createSetting:
     handler: features/server/settings/create.createSetting
     events:
