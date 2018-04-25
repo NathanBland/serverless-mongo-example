@@ -35,13 +35,13 @@ module.exports.createUser = (event, context, callback) => {
           "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS 
           "Set-Cookie": cookie.serialize('Authorization', token, {
             httpOnly: true,
-            secure: true,
+            secure: event.requestContext.stage === 'dev' ? false : true,
             expires: 60 * 60 * 24 * 7,
             maxAge: 60 * 60 * 24 * 7 // 1 week 
           }),
         },
         body: JSON.stringify({
-          user: 'created'
+          user: {...user, isAuthenticated: true}
         })
       })
     })
