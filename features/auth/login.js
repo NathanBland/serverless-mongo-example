@@ -22,14 +22,17 @@ module.exports.loginUser = (event, context, callback) => {
     .then((result) => {
       console.log('user object:', result)
       User.db.close()
-      if (result.error) {
+      if (!result.user) {
+        console.log('no user')
         throw new Error('invalid username or password')
       }
       let expiresDate = new Date()
       expiresDate = new Date(expiresDate.setHours(expiresDate.getHours()+ (24 * 7)))
       const token = jwt.encode({
-        id: result.userDetails.id,
-        username: result.userDetails.username,
+        id: result.user.id,
+        username: result.user.username,
+        email: result.user.email,
+        displayName: result.user.displayName,
         expiresAt: expiresDate,
       }, tokenSecret)
       return callback(null, {
@@ -45,11 +48,17 @@ module.exports.loginUser = (event, context, callback) => {
           }),
         },
         body: JSON.stringify({
-          user: {...result.userDetails, isAuthenticated: true}
+          user: {
+            id: result.user.id,
+            username: result.user.username,
+            email: result.user.email,
+            displayName: result.user.displayName,
+            isAuthenticated: true
+          }
         })
       })
-    })
-    .catch((e) => {
+    }).catch((e) => {
+      console.error('error:', e)
       return callback(null, {
         statusCode: 401,
         body: JSON.stringify({

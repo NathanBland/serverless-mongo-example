@@ -3,23 +3,24 @@ const jwt = require('jwt-simple')
 const cookie = require('cookie')
 const tokenSecret = process.env.tokenSecret || 'a really awful secret'
 
-module.exports.me = (event, context, callback) => {
+module.exports.logout = (event, context, callback) => {
   if (!event.headers.Cookie && !event.headers.cookie) {
     console.log('no cookie. headers:', event.headers)
     return callback(null, {
-      statusCode: 401,
+      statusCode: 200,
       body: JSON.stringify({
-        user: 'Unauthorized'
+        message: 'No session to destroy'
       })
     })
   }
   try {
-    console.log('[me.js] trying to verify cookie..')
+    //TODO: we should blacklist the existing token here. OR whitelist active ones
+    console.log('[logout.js] trying to verify cookie..')
     const token = cookie.parse(event.headers.Cookie || event.headers.cookie).Authorization
     const decoded = jwt.decode(token, tokenSecret)
     console.log('decoded:', decoded)
     let expiresDate = new Date()
-    expiresDate = new Date(expiresDate.setHours(expiresDate.getHours()+ (24 * 7)))
+    expiresDate = new Date(expiresDate.setHours(expiresDate.getHours() - (24 * 7)))
     const updatedToken = jwt.encode({
       id: token.id,
       username: token.username,
@@ -34,7 +35,7 @@ module.exports.me = (event, context, callback) => {
           httpOnly: true,
           secure: event.requestContext.stage === 'dev' ? false : true,
           expires: expiresDate,
-          maxAge: 60 * 60 * 24 * 7 // 1 week 
+          maxAge: -1 // 1 week 
         }),
       },
       body: JSON.stringify({...decoded, isAuthenticated: true})
