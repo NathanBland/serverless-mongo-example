@@ -17,19 +17,20 @@ module.exports.loginUser = (event, context, callback) => {
     User.findOne({username: body.username})
     .then(user => {
       const authenticate = User.authenticate()
-      return {result: authenticate(body.username, body.password), user: user}
+      return authenticate(body.username, body.password)
     })
     .then((result) => {
       console.log('user object:', result)
       User.db.close()
-      if (!result) {
-        new error('invalid username or password')
+      if (result.error) {
+        throw new Error('invalid username or password')
       }
-      let expires = new Date()
+      let expiresDate = new Date()
+      expiresDate = new Date(expiresDate.setHours(expiresDate.getHours()+ (24 * 7)))
       const token = jwt.encode({
-        id: result.user.id,
-        username: result.user.username,
-        expiresAt: expires.setHours(expires.getHours()+ (60 * 60 * 24 * 7))
+        id: result.userDetails.id,
+        username: result.userDetails.username,
+        expiresAt: expiresDate,
       }, tokenSecret)
       return callback(null, {
         statusCode: 200,
@@ -39,14 +40,22 @@ module.exports.loginUser = (event, context, callback) => {
           "Set-Cookie": cookie.serialize('Authorization', token, {
             httpOnly: true,
             secure: event.requestContext.stage === 'dev' ? false : true,
-            // expires: 60 * 60 * 24 * 7,
+            expires: expiresDate,
             maxAge: 60 * 60 * 24 * 7 // 1 week 
           }),
         },
         body: JSON.stringify({
-          user: {...result.user, isAuthenticated: true}
+          user: {...result.userDetails, isAuthenticated: true}
         })
       })
+    })
+    .catch((e) => {
+      return callback(null, {
+        statusCode: 401,
+        body: JSON.stringify({
+          user: 'Unauthorized'
+        })
+      })  
     })
   })
   .catch((e) => {

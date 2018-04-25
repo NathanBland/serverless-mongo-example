@@ -5,20 +5,25 @@ const tokenSecret = process.env.tokenSecret || 'a really awful secret'
 
 module.exports.me = (event, context, cb) => {
   try {
-    console.log('trying to verify cookie..', event.headers.cookie)
-    const token = cookie.parse(event.headers.cookie).Authorization
+    console.log('[me.js] trying to verify cookie..')
+    const token = cookie.parse(event.headers.Cookie || event.headers.cookie).Authorization
     const decoded = jwt.decode(token, tokenSecret)
-    console.log('token:', token)
-    console.log('decoded:', decoded)
+    let expiresDate = new Date()
+    expiresDate = new Date(expiresDate.setHours(expiresDate.getHours()+ (24 * 7)))
+    const updatedToken = jwt.encode({
+      id: token.id,
+      username: token.username,
+      expiresAt: expiresDate,
+    }, tokenSecret)
     return cb(null, {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin" : "*", // Required for CORS support to work
         "Access-Control-Allow-Credentials" : true, // Required for cookies, authorization headers with HTTPS 
-        "Set-Cookie": cookie.serialize('Authorization', token, {
+        "Set-Cookie": cookie.serialize('Authorization', updatedToken, {
           httpOnly: true,
           secure: event.requestContext.stage === 'dev' ? false : true,
-          // expires: 60 * 60 * 24 * 7,
+          expires: expiresDate,
           maxAge: 60 * 60 * 24 * 7 // 1 week 
         }),
       },

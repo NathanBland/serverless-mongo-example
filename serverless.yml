@@ -80,10 +80,7 @@ functions:
   authCheck:
     handler: features/auth/me.me
     events:
-      - http: 
-          path: auth/me
-          method: post
-          cors: true
+      - http: post auth/me
   createSetting:
     handler: features/server/settings/create.createSetting
     events:

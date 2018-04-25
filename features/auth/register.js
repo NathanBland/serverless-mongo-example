@@ -22,11 +22,12 @@ module.exports.createUser = (event, context, callback) => {
       return callback(new Error(err))
     }
     passport.authenticate('local', {session: false})(event, callback, function () {
-      let expires = new Date()
+      let expiresDate = new Date()
+      expiresDate = new Date(expiresDate.setHours(expiresDate.getHours()+ (24 * 7)))
       const token = jwt.encode({
         id: user.id,
         username: user.username,
-        expiresAt: expires.setHours(expires.getHours()+ (60 * 60 * 24 * 7))
+        expiresAt: expiresDate
       }, tokenSecret)
       return callback(null, {
         statusCode: 201,
@@ -36,7 +37,7 @@ module.exports.createUser = (event, context, callback) => {
           "Set-Cookie": cookie.serialize('Authorization', token, {
             httpOnly: true,
             secure: event.requestContext.stage === 'dev' ? false : true,
-            expires: 60 * 60 * 24 * 7,
+            expires: expiresDate,
             maxAge: 60 * 60 * 24 * 7 // 1 week 
           }),
         },
