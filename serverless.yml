@@ -73,6 +73,13 @@ functions:
           path: auth/login
           method: post
           cors: true
+  logoutUser:
+    handler: features/auth/logout.logout
+    events:
+      - http: 
+          path: auth/logout
+          method: post
+          cors: true
   registerUser:
     handler: features/auth/register.createUser
     events:
@@ -80,10 +87,7 @@ functions:
   authCheck:
     handler: features/auth/me.me
     events:
-      - http: 
-          path: auth/me
-          method: post
-          cors: true
+      - http: post auth/me
   createSetting:
     handler: features/server/settings/create.createSetting
     events:
